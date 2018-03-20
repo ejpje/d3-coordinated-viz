@@ -1,1 +1,16 @@
 /*Stylesheet by Emily Pettit, 2018*/
+.map {
+  border: medium solid #999;
+  background-color: #003182;
+  position: relative;
+  left: 35px;
+}
+
+.states {
+  stroke: #2d4872;
+  fill: #cee1ff;
+}
+
+body {
+  background-color: black;
+}
