@@ -27,23 +27,29 @@ function setMap(){ //set up choropleth map
     .defer(d3.json, "data/USAstates.topojson") //load background spatial data
     .await(callback);
 
+
   function callback(error, csvData, usa){
-    var continentalUSA = topojson.feature(usa, usa.objects.USAstates).features; //convert topojson to geojson
 
-    var attrArray = ["State", "FID", "2016medHouseInc", "USFAclubs", "USFAmembers", "2017tournaments", "RioOlympians", "LondonOlympians"]; //variables for data join
+    //convert topojson to geojson
+    var continentalUSA = topojson.feature(usa, usa.objects.USAstates).features;
 
-    for (var i=0; i<csvData.length; i++){ //loop through csv to assign each set of csv attribute values to geojson state
+    var attrArray = ["State", "FID", "Pop2017", "Income2016", "USFAclubs", "USFAmembers", "Tournaments2017", "RioOlympians", "LondonOlympians"]; //variables for data join
+
+    //loop through csv to assign each set of csv attribute values to geojson state
+    for (var i=0; i<csvData.length; i++){
       var csvState = csvData[i]; //the current state
-      var csvKey = csvState.FID; //the csv primary key
-      console.log(csvKey);
-      for (var a=0; a<continentalUSA.length; a++){ //loop through geojson states to find correct state
+      var csvKey = csvState.STATE; //the csv primary key
 
+      //loop through geojson states to find correct state
+      for (var a=0; a<continentalUSA.length; a++){
         var geojsonProps = continentalUSA[a].properties; //the current state geojson properties
-        var geojsonKey = geojsonProps.FID; //the geojson primary key
+        var geojsonKey = geojsonProps.STATE; //the geojson primary key
 
-        if (geojsonKey == csvKey){ //where primary keys match, transfer csv data to geojson properties object
+        //where primary keys match, transfer csv data to geojson properties object
+        if (geojsonKey == csvKey){
 
-          attrArray.forEach(function(attr){ //assign all attributes and values
+          //assign all attributes and values
+          attrArray.forEach(function(attr){
             var val = parseFloat(csvState[attr]); //get csv attribute value
             geojsonProps[attr] = val; //assign attribute and value to geojson properties
           });
@@ -53,12 +59,12 @@ function setMap(){ //set up choropleth map
 
     var states = map.selectAll(".states") //add states to the map
       .data(continentalUSA)
-      .enter()
-      .append("path")
+      .enter() //create elements
+      .append("path") //append elements to svg
       .attr("class", function(d){
         return "states " + d.properties.State;
       })
-      .attr("d", path);
+      .attr("d", path); //project data as geometry in svg
 
       console.log(csvData);
       console.log(continentalUSA);
