@@ -45,10 +45,37 @@
 
       continentalUSA = joinData(continentalUSA, csvData); //join csv data to geojson enumeration units
 
-      var colorScale = makeColorScale(csvData); //create the choropleth color scale
+      var colorScale = makeColorScale(csvData); //create the color scale
 
       setEnumerationUnits(continentalUSA, map, path, colorScale); //add enumeration units to the map
     };
+  };
+
+  //function to create color scale generator
+  function makeColorScale(data){
+      var colorClasses = [
+          "#FFE3CC",
+          "#FDBE85",
+          "#FD8D3C",
+          "#E6550D",
+          "#A63603"
+      ];
+
+      //create color scale generator
+      var colorScale = d3.scaleQuantile()
+          .range(colorClasses);
+
+      //build array of all values of the expressed attribute
+      var domainArray = [];
+      for (var i=0; i<data.length; i++){
+          var val = parseFloat(data[i][expressed]);
+          domainArray.push(val);
+      };
+
+      //assign array of expressed values as scale domain
+      colorScale.domain(domainArray);
+
+      return colorScale;
   };
 
   function joinData(continentalUSA, csvData){
@@ -85,44 +112,21 @@
       .attr("class", function(d){
         return "states " + d.properties.State;
       })
-      .attr("d", path); //project data as geometry in svg
-      .style("fill", function(d) { //color enumeration units
-      	return choropleth(d.properties, colorScale);
+      .attr("d", path) //project data as geometry in svg
+      .style("fill", function(d){
+          return colorScale(d.properties[expressed]);
       });
   };
 
-  //create color scale generator
-  function makeColorScale(data){
-    var colorClasses = [
-      "#f9f6f4",
-      "#fce8de",
-      "#fcceb5",
-      "#ce9b80",
-      "#916953"
-    ];
-
-    var colorScale = d3.scaleQuantile() //create color scale generator
-      .range(colorClasses);
-
-    var domainArray = []; //build array of all values of the expressed attribute
-      for(var i=0; i<data.length; i++){
-        var val = parseFloat(data[i][expressed]);
-        domainArray.push(val);
-    };
-
-    colorScale.domain(domainArray); //assign array of expressed values as scale domain
-
-    return colorScale;
-  };
-
-  //function to test for data value and return color in choropleth
+  //function to test for data value and return color
   function choropleth(props, colorScale){
-    var val = parseFloat(props[expressed]); //make sure attribute value is a number
-
-    if (typeof val == "number" && !isNaN(val)){ //if attribute value exists, assign a color; otherwise assign gray
-      return colorScale(val);
+    //make sure attribute value is a number
+    var val = parseFloat(props[expressed]);
+    //if attribute value exists, assign a color; otherwise assign gray
+    if (typeof val == 'number' && !isNaN(val)){
+        return colorScale(val);
     } else {
-      return "#ccc";
+        return "#CCC";
     };
-  };
+};
 })();
