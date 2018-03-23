@@ -2,7 +2,7 @@
 (function(){
 
   //pseudo-global variables
-  var attrArray = ["Pop2017", "Income2016", "USFAclubs", "USFAmembers", "Tournaments2017", "RioOlympians", "LondonOlympians"]; //list of attributes
+  var attrArray = ["Income2016", "Pop2017", "USFAclubs", "USFApercapita", "USFAmembers", "MembersPerCapita", "Tournaments2017", "RioOlympians", "LondonOlympians"]; //list of attributes
   var expressed = attrArray[0]; //initial attribute
 
   window.onload = setMap(); //begin script when window loads
@@ -135,7 +135,7 @@
     if (typeof val == 'number' && !isNaN(val)){
         return colorScale(val);
     } else {
-        return "#CCC";
+        return "#ccc";
     };
 };
 })();
