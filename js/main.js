@@ -2,14 +2,14 @@
 (function(){
 
   //pseudo-global variables
-  var attrArray = ["Income2016", "Pop2017", "USFAclubs", "USFApercapita", "USFAmembers", "MembersPerCapita", "Tournaments2017", "RioOlympians", "LondonOlympians"]; //list of attributes
-  var expressed = attrArray[0]; //initial attribute
+  var attrArray = ["Income2016", "Pop2017", "USFAclubs", "USFAmembers", "Tournaments2017", "RioOlympians", "LondonOlympians"]; //list of attributes
+  var expressed = attrArray[2]; //initial attribute
 
   window.onload = setMap(); //begin script when window loads
 
   //set up choropleth map
   function setMap(){
-    var width = 1000, //set map frame dimensions
+    var width = window.innerWidth * 0.95, //set map frame dimensions
         height = 700;
 
     var map = d3.select("body") //create new svg container for the map
@@ -18,7 +18,7 @@
       .attr("width", width)
       .attr("height", height);
 
-      var projection = d3.geoAlbers() //set projection
+    var projection = d3.geoAlbers() //set projection
       .center([-15, 41.78])
       .rotate([96.90, -5.45, 0])
       .parallels([45.00, 45.5])
@@ -48,6 +48,10 @@
       var colorScale = makeColorScale(csvData); //create the color scale
 
       setEnumerationUnits(continentalUSA, map, path, colorScale); //add enumeration units to the map
+
+      setChart(csvData, colorScale); //add coordinated visualization to the map
+
+      createDropdown(csvData); //create dropdown menu
     };
   };
 
@@ -129,13 +133,148 @@
 
   //function to test for data value and return color
   function choropleth(props, colorScale){
-    //make sure attribute value is a number
-    var val = parseFloat(props[expressed]);
-    //if attribute value exists, assign a color; otherwise assign gray
-    if (typeof val == 'number' && !isNaN(val)){
-        return colorScale(val);
-    } else {
-        return "#ccc";
-    };
-};
+      //make sure attribute value is a number
+      var val = parseFloat(props[expressed]);
+      //if attribute value exists, assign a color; otherwise assign gray
+      if (typeof val == 'number' && !isNaN(val)){
+          return colorScale(val);
+      } else {
+          return "#CCC";
+      };
+  };
+
+function setChart(csvData, colorScale){
+    //chart frame dimensions
+    var chartWidth = window.innerWidth * 0.425,
+        chartHeight = 300,
+        leftPadding = 25,
+        rightPadding = 2,
+        topBottomPadding = 5,
+        chartInnerWidth = chartWidth - leftPadding - rightPadding,
+        chartInnerHeight = chartHeight - topBottomPadding * 2,
+        translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
+
+    //create a second svg element for the bar chart
+    var chart = d3.select("body")
+      .append("svg")
+      .attr("width", chartWidth)
+      .attr("height", chartHeight)
+      .attr("class", "chart");
+
+    //create a rectangle for chart background fill
+    var chartBackground = chart.append("rect")
+      .attr("class", "chartBackground")
+      .attr("width", chartInnerWidth)
+      .attr("height", chartInnerHeight)
+      .attr("transform", translate);
+
+    //create a scale to size bars proportionally to frame and for axis
+    var yScale = d3.scaleLinear()
+      .range([300, 0])
+      .domain([0, 100]);
+
+    //set bars for each province
+    var bars = chart.selectAll(".bar")
+      .data(csvData)
+      .enter()
+      .append("rect")
+      .sort(function(a, b){
+          return b[expressed]-a[expressed]
+      })
+      .attr("class", function(d){
+          return "bar " + d.STATE;
+      })
+      .attr("width", chartInnerWidth / csvData.length - 1)
+      .attr("x", function(d, i){
+          return i * (chartInnerWidth / csvData.length) + leftPadding;
+      })
+      .attr("height", function(d, i){
+          return 290 - yScale(parseFloat(d[expressed]));
+      })
+      .attr("y", function(d, i){
+          return yScale(parseFloat(d[expressed])) + topBottomPadding;
+      })
+      .style("fill", function(d){
+          return choropleth(d, colorScale);
+      });
+
+    //create a text element for the chart title
+    var chartTitle = chart.append("text")
+      .attr("x", 40)
+      .attr("y", 40)
+      .attr("class", "chartTitle")
+      .text("Number of " + expressed[0] + " in each region");
+
+    //create vertical axis generator
+    var yAxis = d3.axisLeft()
+      .scale(yScale);
+
+    //place axis
+    var axis = chart.append("g")
+      .attr("class", "axis")
+      .attr("transform", translate)
+      .call(yAxis);
+
+    //create frame for chart border
+    var chartFrame = chart.append("rect")
+      .attr("class", "chartFrame")
+      .attr("width", chartInnerWidth)
+      .attr("height", chartInnerHeight)
+      .attr("transform", translate);
+  };
+
+  //function to create a dropdown menu for attribute selection
+  function createDropdown(csvData){
+
+    var dropdown = d3.select("body")   //add select element
+      .append("select")
+      .attr("class", "dropdown")
+      .on("change", function(){
+          changeAttribute(this.value, csvData)
+        });
+
+    var titleOption = dropdown.append("option") //add initial dropdown option
+      .attr("class", "titleOption")
+      .attr("disabled", "true")
+      .text("Select Attribute");
+
+    var attrOptions = dropdown.selectAll("attrOptions") //add attribute name options
+      .data(attrArray)
+      .enter()
+      .append("option")
+      .attr("value", function(d){ return d })
+      .text(function(d){ return d });
+  };
+
+  //dropdown change listener handler
+  function changeAttribute(attribute, csvData){
+      expressed = attribute; //change the expressed attribute
+
+      var colorScale = makeColorScale(csvData); //recreate the color scale
+
+      var states = d3.selectAll(".states") //recolor enumeration units
+          .style("fill", function(d){
+              return choropleth(d.properties, colorScale)
+          });
+
+      var bars = d3.selectAll(".bar") //re-sort, resize, and recolor bars in bar chart
+        //re-sort bars
+        .sort(function(a, b){
+            return b[expressed] - a[expressed];
+        })
+        .attr("x", function(d, i){
+            return i * (chartInnerWidth / csvData.length) + leftPadding;
+        })
+        //resize bars
+        .attr("height", function(d, i){
+            return 290 - yScale(parseFloat(d[expressed]));
+        })
+        .attr("y", function(d, i){
+            return yScale(parseFloat(d[expressed])) + topBottomPadding;
+        })
+        //recolor bars
+        .style("fill", function(d){
+            return choropleth(d, colorScale);
+        });
+  };
 })();
