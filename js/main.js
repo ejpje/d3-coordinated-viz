@@ -143,7 +143,7 @@
       };
   };
 
-function setChart(csvData, colorScale){
+  function setChart(csvData, colorScale){
     //chart frame dimensions
     var chartWidth = window.innerWidth * 0.425,
         chartHeight = 300,
@@ -154,27 +154,23 @@ function setChart(csvData, colorScale){
         chartInnerHeight = chartHeight - topBottomPadding * 2,
         translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
-    //create a second svg element for the bar chart
-    var chart = d3.select("body")
+    var chart = d3.select("body") //create a second svg element for the bar chart
       .append("svg")
       .attr("width", chartWidth)
       .attr("height", chartHeight)
       .attr("class", "chart");
 
-    //create a rectangle for chart background fill
-    var chartBackground = chart.append("rect")
+    var chartBackground = chart.append("rect") //create a rectangle for chart background fill
       .attr("class", "chartBackground")
       .attr("width", chartInnerWidth)
       .attr("height", chartInnerHeight)
       .attr("transform", translate);
 
-    //create a scale to size bars proportionally to frame and for axis
-    var yScale = d3.scaleLinear()
+    var yScale = d3.scaleLinear() //create a scale to size bars proportionally to frame and for axis
       .range([300, 0])
       .domain([0, 100]);
 
-    //set bars for each province
-    var bars = chart.selectAll(".bar")
+    var bars = chart.selectAll(".bar") //set bars for each province
       .data(csvData)
       .enter()
       .append("rect")
@@ -198,25 +194,21 @@ function setChart(csvData, colorScale){
           return choropleth(d, colorScale);
       });
 
-    //create a text element for the chart title
-    var chartTitle = chart.append("text")
+    var chartTitle = chart.append("text") //create a text element for the chart title
       .attr("x", 40)
       .attr("y", 40)
       .attr("class", "chartTitle")
       .text("Number of " + expressed[0] + " in each region");
 
-    //create vertical axis generator
-    var yAxis = d3.axisLeft()
+    var yAxis = d3.axisLeft() //create vertical axis generator
       .scale(yScale);
 
-    //place axis
-    var axis = chart.append("g")
+    var axis = chart.append("g") //place axis
       .attr("class", "axis")
       .attr("transform", translate)
       .call(yAxis);
 
-    //create frame for chart border
-    var chartFrame = chart.append("rect")
+    var chartFrame = chart.append("rect") //create frame for chart border
       .attr("class", "chartFrame")
       .attr("width", chartInnerWidth)
       .attr("height", chartInnerHeight)
@@ -226,12 +218,12 @@ function setChart(csvData, colorScale){
   //function to create a dropdown menu for attribute selection
   function createDropdown(csvData){
 
-    var dropdown = d3.select("body")   //add select element
+    var dropdown = d3.select("body") //add select element
       .append("select")
       .attr("class", "dropdown")
       .on("change", function(){
           changeAttribute(this.value, csvData)
-        });
+      });
 
     var titleOption = dropdown.append("option") //add initial dropdown option
       .attr("class", "titleOption")
