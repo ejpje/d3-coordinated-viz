@@ -167,8 +167,8 @@
       .attr("transform", translate);
 
     var yScale = d3.scaleLinear() //create a scale to size bars proportionally to frame and for axis
-      .range([300, 0])
-      .domain([0, 100]);
+      .range([290, 0])
+      .domain([0, 70]);
 
     var bars = chart.selectAll(".bar") //set bars for each province
       .data(csvData)
@@ -198,7 +198,7 @@
       .attr("x", 40)
       .attr("y", 40)
       .attr("class", "chartTitle")
-      .text("Number of " + expressed[0] + " in each region");
+      .text("Number of " + attrArray[2] + " in each region");
 
     var yAxis = d3.axisLeft() //create vertical axis generator
       .scale(yScale);
