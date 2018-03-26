@@ -2,7 +2,7 @@
 (function(){
 
   //pseudo-global variables
-  var attrArray = ["Income2016", "Pop2017", "USFAclubs", "USFAmembers", "Tournaments2017", "RioOlympians", "LondonOlympians"]; //list of attributes
+  var attrArray = ["State Population in 2017", "Number of USFA Sanctioned Clubs", "USFA Clubs Per Capita", "Number of Active USFA Members", "USFA Members Per Capita", "Number of 2017 Tournaments", "Rio 2016 Olympians", "London 2012 Olympians"]; //list of attributes
   var expressed = attrArray[2]; //initial attribute
 
   window.onload = setMap(); //begin script when window loads
@@ -37,11 +37,6 @@
 
       //translate topojson to geojson
       var continentalUSA = topojson.feature(usa, usa.objects.USAstates).features;
-
-      var states = map.append("path") //add states to map
-        .datum(continentalUSA)
-        .attr("class", "states")
-        .attr("d", path);
 
       continentalUSA = joinData(continentalUSA, csvData); //join csv data to geojson enumeration units
 
@@ -168,9 +163,9 @@
 
     var yScale = d3.scaleLinear() //create a scale to size bars proportionally to frame and for axis
       .range([290, 0])
-      .domain([0, 70]);
+      .domain([0, 100]);
 
-    var bars = chart.selectAll(".bar") //set bars for each province
+    var bars = chart.selectAll(".bars") //set bars for each state
       .data(csvData)
       .enter()
       .append("rect")
@@ -178,7 +173,7 @@
           return b[expressed]-a[expressed]
       })
       .attr("class", function(d){
-          return "bar " + d.STATE;
+          return "bars " + d.STATE;
       })
       .attr("width", chartInnerWidth / csvData.length - 1)
       .attr("x", function(d, i){
@@ -195,10 +190,10 @@
       });
 
     var chartTitle = chart.append("text") //create a text element for the chart title
-      .attr("x", 40)
-      .attr("y", 40)
+      .attr("x", 60)
+      .attr("y", 30)
       .attr("class", "chartTitle")
-      .text("Number of " + attrArray[2] + " in each region");
+      .text(expressed); //if this stops working, add back in attrArray[0] instead of just [expressed]
 
     var yAxis = d3.axisLeft() //create vertical axis generator
       .scale(yScale);
@@ -269,4 +264,8 @@
             return choropleth(d, colorScale);
         });
   };
+
+  function changeChart(attribute, csvData){
+
+  }
 })();
