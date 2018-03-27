@@ -61,8 +61,6 @@
       setChart(csvData, colorScale); //add coordinated visualization to the map
 
       createDropdown(csvData); //create dropdown menu
-
-      //changeChart(csvData, colorScale);
     };
   };
 
@@ -141,11 +139,13 @@
           return colorScale(d.properties[expressed]);
       })
       .on("mouseover", function(d){
-        highlight(d.properties);
+        highlight(d.properties)
       })
       .on("mouseout", function(d){
-        dehighlight(d.properties);
-      });
+        dehighlight(d.properties)
+      })
+      .on("mousemove", moveLabel);
+
     var desc = states.append("desc")
       .text('{"stroke": "#000", "stroke-width": "0.5px"}');
   };
@@ -188,7 +188,8 @@
          })
          .attr("width", chartInnerWidth / csvData.length - 1)
          .on("mouseover", highlight)
-         .on("mouseout", dehighlight);
+         .on("mouseout", dehighlight)
+         .on("mousemove", moveLabel);
 
     var desc = bars.append("desc")
       .text('{"stroke": "none", "stroke-width": "0px"}');
@@ -288,7 +289,6 @@
 
   //function to highlight enumeration units and bars
   function highlight(props){
-
     var selected = d3.selectAll("." + props.STATE) //change stroke
         .style("stroke", "white")
         .style("stroke-width", "3");
@@ -313,5 +313,47 @@
 
       return styleObject[styleName];
     };
+
+    d3.select(".infolabel")
+      .remove();
+  };
+
+  //function to create dynamic label
+  function setLabel(props){
+    var labelAttribute = "<h1>" + props[expressed] + "</h1><b>" + expressed + "</b>"; //label content
+
+    var infolabel = d3.select("body") //create info label div
+      .append("div")
+      .attr("class", "infolabel")
+      .attr("class", props.STATE + "_label")
+      .html(labelAttribute);
+
+    var stateName = infolabel.append("div")
+      .attr("class", "labelname")
+      .html(props.name);
+  };
+
+  //function to move dynamic label with mouse
+  function moveLabel(){
+    //get width of label
+    var labelWidth = d3.select(".infolabel")
+        .node()
+        .getBoundingClientRect()
+        .width;
+
+    //use coordinates of mousemove event to set label coordinates
+    var x1 = d3.event.clientX + 10,
+        y1 = d3.event.clientY - 75,
+        x2 = d3.event.clientX - labelWidth - 10,
+        y2 = d3.event.clientY + 25;
+
+    //horizontal label coordinate, testing for overflow
+    var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
+    //vertical label coordinate, testing for overflow
+    var y = d3.event.clientY < 75 ? y2 : y1;
+
+    d3.select(".infolabel")
+        .style("left", x + "px")
+        .style("top", y + "px");
   };
 })();
