@@ -8,10 +8,10 @@
   //chart frame dimensions
   var chartWidth = window.innerWidth * 0.425,
       chartHeight = 300,
-      leftPadding = 25,
+      leftPadding = 30,
       rightPadding = 2,
       topBottomPadding = 5,
-      chartInnerWidth = chartWidth - leftPadding - rightPadding,
+      chartInnerWidth = chartWidth - leftPadding - rightPadding - 2,
       chartInnerHeight = chartHeight - topBottomPadding * 2,
       translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
@@ -316,9 +316,6 @@
       .scale(yScale)
       //format chart axis labels
       .tickFormat(function (d) {
-        if ((d / 1000) >= 1) {
-          d = d / 1000 + "K";
-        } else
         if ((d / 1000000) >= 1) {
           d = d / 1000000 + "M";
         }
@@ -358,7 +355,6 @@
       var styleObject = JSON.parse(styleText);
       return styleObject[styleName];
     };
-
     d3.select(".infolabel") //remove dynamic label
       .remove();
   };
@@ -366,28 +362,32 @@
 
   //function to create dynamic label
   function setLabel(props){
-    var labelAttribute = "<h1>" + props[expressed] + "</h1><b>" + expressed + "</b>"; //label content
+    //label content
+    var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
 
     var infolabel = d3.select("body") //create info label div
-      .append("div")
-      .attr("class", "infolabel")
-      .attr("class", props.STATE + "_label")
-      .html(labelAttribute);
+        .append("div")
+        .attr("class", "infolabel")
+        .attr("id", props.STATE + "_label")
+        .html(labelAttribute);
 
-    var stateName = infolabel.append("div") //append label to infolabel
-      .attr("class", "STATE")
-      .html(props.name);
+    var regionName = infolabel.append("div")
+        .attr("class", "labelname")
+        .html(props.name);
   };
 
-
-  //function to move dynamic label with mouse
+  //function to move info label with mouse
   function moveLabel(){
     //get width of label
-    var labelWidth = d3.select(".infolabel");
+    var labelWidth = d3.select(".infolabel")
+        .node()
+        .getBoundingClientRect()
+        .width;
 
     //use coordinates of mousemove event to set label coordinates
     var x1 = d3.event.clientX + 10,
-        y1 = d3.event.clientY - 75,
+        y1 = d3.event.clientY - 70,
         x2 = d3.event.clientX - labelWidth - 10,
         y2 = d3.event.clientY + 25;
 

@@ -74,12 +74,6 @@ a:hover {
     background-color: transparent;
 }
 
-a:active {
-    color: yellow;
-    background-color: transparent;
-    text-decoration: underline;
-}
-
 .dropdown {
   position: relative;
   top: 30px;
@@ -100,7 +94,7 @@ a:active {
 
 .chart {
   float: right;
-  margin: 25px 25px 0 0;
+  margin: 25px 25px 25px 25px;
   z-index: 50;
   position: relative;
 }
@@ -133,20 +127,24 @@ a:active {
 }
 
 .infolabel {
-  position: absolute;
-  height: 50px;
-  min-width: 100px;
-  color: #ffffff;
-  background-color: #000;
-  border: solid thin #fff;
-  padding: 5px 10px;
-  z-index: 50;
-  top: -75px;
+    position: absolute;
+    height: 50px;
+    min-width: 100px;
+    color: white;
+    background-color: #000;
+    border: solid thin #fff;
+    padding: 5px 10px;
+    font-family: Helvetica, sans-serif;
+    line-height: 1em;
+    z-index: 50;
 }
 
-.infolabel h2 {
-  margin: 0 20px 0 0;
-  padding: 0;
-  line-height: 1em;
-  z-index: 50;
+.infolabel h1 {
+    margin: 0 20px 0 0;
+    color: white;
+    padding: 0;
+    display: inline-block;
+    line-height: 1em;
+    z-index: 50;
+    font-family: Helvetica, sans-serif;
 }
