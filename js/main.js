@@ -21,7 +21,7 @@
 
   window.onload = setMap(); //begin script when window loads
 
-  //set up choropleth map
+  //function to set up choropleth map
   function setMap(){
     var width = window.innerWidth * 0.95, //set map frame dimensions
         height = 700;
@@ -49,8 +49,7 @@
 
     function callback(error, csvData, usa){
 
-      //translate topojson to geojson
-      var continentalUSA = topojson.feature(usa, usa.objects.USAstates).features;
+      var continentalUSA = topojson.feature(usa, usa.objects.USAstates).features; //translate topojson to geojson
 
       continentalUSA = joinData(continentalUSA, csvData); //join csv data to geojson enumeration units
 
@@ -74,28 +73,24 @@
           "#A63603"
       ];
 
-    //create color scale generator
-    var colorScale = d3.scaleThreshold()
+    var colorScale = d3.scaleThreshold() //create color scale generator
         .range(colorClasses);
 
-    //build array of all values of the expressed attribute
-    var domainArray = [];
-    for (var i=0; i<data.length; i++){
+    var domainArray = []; //build array of all values of the expressed attribute
+      for (var i=0; i<data.length; i++){
         var val = parseFloat(data[i][expressed]);
         domainArray.push(val);
     };
 
-    //cluster data using ckmeans clustering algorithm to create natural breaks
-    var clusters = ss.ckmeans(domainArray, 5);
+    var clusters = ss.ckmeans(domainArray, 5); //cluster data using ckmeans clustering algorithm to create natural breaks
     //reset domain array to cluster minimums
     domainArray = clusters.map(function(d){
         return d3.min(d);
     });
-    //remove first value from domain array to create class breakpoints
-    domainArray.shift();
 
-    //assign array of last 4 cluster minimums as domain
-    colorScale.domain(domainArray);
+    domainArray.shift(); //remove first value from domain array to create class breakpoints
+
+    colorScale.domain(domainArray); //assign array of last 4 cluster minimums as domain
 
     return colorScale;
   };
@@ -113,7 +108,6 @@
 
         //where primary keys match, transfer csv data to geojson properties object
         if (geojsonKey == csvKey){
-
           //assign all attributes and values
           attrArray.forEach(function(attr){
             var val = parseFloat(csvState[attr]); //get csv attribute value
@@ -127,12 +121,12 @@
 
   //add states to the map
   function setEnumerationUnits(continentalUSA, map, path, colorScale){
-    var states = map.selectAll(".state") //add states to map
+    var states = map.selectAll(".states") //add states to map
       .data(continentalUSA)
       .enter() //create elements
       .append("path") //append elements to svg
       .attr("class", function(d){
-        return "states " + d.properties.State;
+        return "states " + d.properties.STATE;
       })
       .attr("d", path) //project data as geometry in svg
       .style("fill", function(d){
@@ -177,19 +171,19 @@
       .attr("transform", translate);
 
     var bars = chart.selectAll(".bar") //set bars for each state
-         .data(csvData)
-         .enter()
-         .append("rect")
-         .sort(function(a, b){
-             return b[expressed]-a[expressed]
-         })
-         .attr("class", function(d){
-             return "bar " + d.STATE;
-         })
-         .attr("width", chartInnerWidth / csvData.length - 1)
-         .on("mouseover", highlight)
-         .on("mouseout", dehighlight)
-         .on("mousemove", moveLabel);
+      .data(csvData)
+      .enter()
+      .append("rect")
+      .sort(function(a, b){
+          return b[expressed]-a[expressed]
+      })
+      .attr("class", function(d){
+          return "bar " + d.STATE;
+      })
+      .attr("width", chartInnerWidth / csvData.length - 1)
+      .on("mouseover", highlight)
+      .on("mouseout", dehighlight)
+      .on("mousemove", moveLabel);
 
     var desc = bars.append("desc")
       .text('{"stroke": "none", "stroke-width": "0px"}');
@@ -247,7 +241,7 @@
 
       var states = d3.selectAll(".states") //recolor enumeration units
         .transition()
-        .duration(1000)
+        .duration(1500)
         .style("fill", function(d){
             return choropleth(d.properties, colorScale)
         });
@@ -283,8 +277,9 @@
     .style("fill", function(d){
         return choropleth(d, colorScale);
     })
+
     var chartTitle = d3.select(".chartTitle")
-      .text(expressed); //if this stops working, add back in attrArray[0] instead of just [expressed]
+      .text(expressed);
   };
 
   //function to highlight enumeration units and bars
@@ -336,10 +331,7 @@
   //function to move dynamic label with mouse
   function moveLabel(){
     //get width of label
-    var labelWidth = d3.select(".infolabel")
-        .node()
-        .getBoundingClientRect()
-        .width;
+    var labelWidth = d3.select(".infolabel");
 
     //use coordinates of mousemove event to set label coordinates
     var x1 = d3.event.clientX + 10,
