@@ -2,7 +2,7 @@
 (function(){
 
   //pseudo-global variables
-  var attrArray = ["State Population in 2017", "Number of USFA Sanctioned Clubs", "USFA Clubs Per Capita", "Number of Active USFA Members", "USFA Members Per Capita", "Number of 2017 Tournaments", "Rio 2016 Olympians", "London 2012 Olympians"]; //list of attributes
+  var attrArray = ["State Population in 2017", "Number of USFA Sanctioned Clubs", "Sanctioned USFA Clubs Per Capita", "Number of Active USFA Members", "USFA Members Per Capita", "Number of 2017 Tournaments", "Rio 2016 Olympians", "London 2012 Olympians"]; //list of attributes
   var expressed = attrArray[0]; //initial attribute
 
   //chart frame dimensions
@@ -319,8 +319,8 @@
         if ((d / 1000000) >= 1) {
           d = d / 1000000 + "M";
         } else
-        if ((d * 1000) <= 1) {
-          d = d * 1000 + "%";
+        if ((d * 1000) <= 0.05) {
+          d = d * 1000;
         }
         return d;
       });
@@ -333,8 +333,8 @@
   //function to highlight enumeration units and bars
   function highlight(props){
     var selected = d3.selectAll("." + props.STATE) //change stroke
-        .style("stroke", "white")
-        .style("stroke-width", "3");
+        .style("fill-opacity", "0.4")
+        .style("stroke-width", "2");
 
     setLabel(props); //add dynamic label on mouseover
   };
@@ -343,8 +343,8 @@
   //function to reset the element style on mouseout to remove the highlight
   function dehighlight(props){
     var selected = d3.selectAll("." + props.STATE)
-      .style("stroke", function(){
-        return getStyle(this, "stroke")
+      .style("fill-opacity", function(){
+        return getStyle(this, "fill-opacity")
       })
       .style("stroke-width", function(){
         return getStyle(this, "stroke-width")
@@ -356,6 +356,7 @@
         .text();
 
       var styleObject = JSON.parse(styleText);
+
       return styleObject[styleName];
     };
     d3.select(".infolabel") //remove dynamic label
@@ -377,8 +378,22 @@
 
     var regionName = infolabel.append("div")
         .attr("class", "labelname")
-        .html(props.name);
+        .html(props.STATE);
+
+    var formatNumber = d3.format(".0f"),
+      formatMillion = function(x) { return formatNumber(x / 1e6) + "M";},
+      formatThousand = function(x) { return formatNumber(x / 1e3) + "k";};
+
+    function formatAbbreviation(x) {
+      var v = Math.abs(x);
+      return (v >= .9995e6 ? formatMillion
+        : formatThousand)(x);
+    }
+
+    formatAbbreviation(5000000);
+    formatAbbreviation(5000);
   };
+
 
   //function to move info label with mouse
   function moveLabel(){
@@ -390,9 +405,9 @@
 
     //use coordinates of mousemove event to set label coordinates
     var x1 = d3.event.clientX + 10,
-        y1 = d3.event.clientY + 80,
+        y1 = d3.event.clientY + 90,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 80;
+        y2 = d3.event.clientY + 90;
 
     //horizontal label coordinate, testing for overflow
     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;

@@ -19,20 +19,21 @@ body {
   display: inline-block;
   margin: auto;
   text-align: center;
+  font-family: 'Source Sans Pro', sans-serif;
 }
 
 img {
-  height: 75px;
-  width: 75px;
-  bottom: -30px;
+  height: 70px;
+  width: 70px;
+  bottom: -20px;
   position: relative;
 }
 
 #title {
-  font-family: Helvetica, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
-  color: #ceeff0;
-  font-size: 2.5em;
+  color: #E6550D;
+  font-size: 3em;
   text-align: center;
   margin: auto;
   display: inline-block;
@@ -41,10 +42,11 @@ img {
 
 #text {
   color: white;
-  font-size: 14px;
+  font-size: 16px;
   text-align: center;
-  font-family: Helvetica, sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   display: inline-block;
+  width: 75%;
 }
 
 #footer {
@@ -55,12 +57,14 @@ img {
     color: white;
     font-size: 10px;
     line-height: 0.5;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 a:link {
     color: #ceeff0;
     background-color: transparent;
     text-decoration: underline;
+    font-family: 'Source Sans Pro', sans-serif;
 }
 
 a:visited {
@@ -79,7 +83,7 @@ a:hover {
   top: 30px;
   left: 40px;
   z-index: 10;
-  font-family: sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 1em;
   font-weight: bold;
   padding: 2px;
@@ -88,7 +92,7 @@ a:hover {
 }
 
 .numbers {
-  font-family: sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 0.5em;
 }
 
@@ -100,7 +104,7 @@ a:hover {
 }
 
 .chartTitle {
-  font-family: sans-serif;
+  font-family: 'Source Sans Pro', sans-serif;
   font-size: 1em;
   font-weight: bold;
   fill: white;
@@ -121,30 +125,31 @@ a:hover {
 }
 
 .axis text {
-    font-family: sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     font-size: 0.8em;
     fill: white;
 }
 
 .infolabel {
     position: absolute;
-    height: 50px;
-    min-width: 100px;
+    height: 40px;
+    min-width: 90px;
     color: white;
-    background-color: #000;
+    background-color: rgba(0, 0, 0, 0.8);
     border: solid thin #fff;
     padding: 5px 10px;
-    font-family: Helvetica, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
     line-height: 1em;
     z-index: 50;
 }
 
 .infolabel h1 {
     margin: 0 20px 0 0;
-    color: white;
+    color: #E6550D;
     padding: 0;
     display: inline-block;
     line-height: 1em;
     z-index: 50;
-    font-family: Helvetica, sans-serif;
+    font-family: 'Source Sans Pro', sans-serif;
+    font-size: 1.5em;
 }
