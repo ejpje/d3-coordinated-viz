@@ -309,7 +309,7 @@
         return choropleth(d, colorScale);
     })
 
-    var chartTitle = d3.select(".chartTitle")
+    var chartTitle = d3.select(".chartTitle") //create title for the bar chart
       .text(expressed);
 
     var yAxis = d3.axisLeft() //fix provided by Bob Cowling to adjust yAxis
@@ -318,6 +318,9 @@
       .tickFormat(function (d) {
         if ((d / 1000000) >= 1) {
           d = d / 1000000 + "M";
+        } else
+        if ((d * 1000) <= 1) {
+          d = d * 1000 + "%";
         }
         return d;
       });
@@ -387,9 +390,9 @@
 
     //use coordinates of mousemove event to set label coordinates
     var x1 = d3.event.clientX + 10,
-        y1 = d3.event.clientY - 70,
+        y1 = d3.event.clientY + 80,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 25;
+        y2 = d3.event.clientY + 80;
 
     //horizontal label coordinate, testing for overflow
     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
