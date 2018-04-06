@@ -1,7 +1,7 @@
 /*Stylesheet by Emily Pettit, 2018*/
 .map {
+  border: medium solid #999;
   margin: 10px 0 0 20px;
-  position: absolute;
 }
 
 .states {
@@ -29,7 +29,7 @@ img {
   position: relative;
 }
 
-#title {
+h1 {
   font-family: 'Source Sans Pro', sans-serif;
   font-weight: bold;
   color: #E6550D;
@@ -40,7 +40,7 @@ img {
   position: relative;
 }
 
-#text {
+.text {
   color: white;
   font-size: 16px;
   text-align: center;
@@ -79,10 +79,9 @@ a:hover {
 }
 
 .dropdown {
-  position: relative;
-  top: 30px;
-  left: 40px;
-  z-index: 10;
+  position: absolute;
+  right: 30px;
+  top: 200px;
   font-family: 'Source Sans Pro', sans-serif;
   font-size: 1em;
   font-weight: bold;
@@ -98,9 +97,7 @@ a:hover {
 
 .chart {
   float: right;
-  margin: 25px 25px 25px 25px;
-  z-index: 50;
-  position: relative;
+  margin: 10px 20px 0 0;
 }
 
 .chartTitle {

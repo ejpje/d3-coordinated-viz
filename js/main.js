@@ -7,7 +7,7 @@
 
   //chart frame dimensions
   var chartWidth = window.innerWidth * 0.425,
-      chartHeight = 300,
+      chartHeight = 400,
       leftPadding = 30,
       rightPadding = 2,
       topBottomPadding = 5,
@@ -16,29 +16,28 @@
       translate = "translate(" + leftPadding + "," + topBottomPadding + ")";
 
   var yScale = d3.scaleLinear() //create a scale to size bars proportionally to frame and for axis
-    .range([290, 0])
+    .range([390, 0])
     .domain([0, 40000000]);
 
   window.onload = setMap(); //begin script when window loads
 
   //function to set up choropleth map
   function setMap(){
-    var width = window.innerWidth * 0.95, //set map frame dimensions
-        height = 700;
+    var width = window.innerWidth * 0.5, //set map frame dimensions
+        height = 400;
 
     var map = d3.select("body") //create new svg container for the map
       .append("svg")
       .attr("class", "map")
       .attr("width", width)
       .attr("height", height)
-      .append("g");
+      .attr("id", "mapsvg")
+      .append("g")
+      .attr("id", "mapg");
 
-    var projection = d3.geoAlbers() //set projection
-      .center([-15, 41.78])
-      .rotate([96.90, -5.45, 0])
-      .parallels([45.00, 45.5])
-      .scale(600)
-      .translate([width / 2, height / 2]);
+    var projection = d3.geoAlbersUsa() //set projection to Albers USA equal area conic projection
+      .scale(800)
+      .translate([width/2, height/2]);
 
     var path = d3.geoPath() //create path generator to draw the geographies
       .projection(projection);
@@ -288,7 +287,7 @@
     })
     //size/resize bars
     .attr("height", function(d, i){
-        var outHeight = (290) - yScale(parseFloat(d[expressed]));
+        var outHeight = (390) - yScale(parseFloat(d[expressed]));
         if (outHeight < 0) {
           return 0;
         } else {
