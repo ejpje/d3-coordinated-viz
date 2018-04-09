@@ -8,7 +8,7 @@
   //chart frame dimensions
   var chartWidth = window.innerWidth * 0.425,
       chartHeight = 400,
-      leftPadding = 30,
+      leftPadding = 43,
       rightPadding = 2,
       topBottomPadding = 5,
       chartInnerWidth = chartWidth - leftPadding - rightPadding - 2,
@@ -20,6 +20,7 @@
     .domain([0, 40000000]);
 
   window.onload = setMap(); //begin script when window loads
+
 
   //function to set up choropleth map
   function setMap(){
@@ -160,6 +161,7 @@
       };
   };
 
+
   //function to create bar chart
   function setChart(csvData, colorScale){
 
@@ -287,7 +289,7 @@
     })
     //size/resize bars
     .attr("height", function(d, i){
-        var outHeight = (390) - yScale(parseFloat(d[expressed]));
+        var outHeight = (chartHeight-9) - yScale(parseFloat(d[expressed]));
         if (outHeight < 0) {
           return 0;
         } else {
@@ -318,10 +320,10 @@
         if ((d / 1000000) >= 1) {
           d = d / 1000000 + "M";
         } else
-        if ((d * 1000) <= 0.05) {
-          d = d * 1000;
-        }
-        return d;
+        if (d < .0007) {
+          d3.format(".1e");
+        };
+      return d;
       });
 
     var update_yAxis = d3.selectAll("g.axis") //update chart axis
@@ -333,7 +335,7 @@
   function highlight(props){
     var selected = d3.selectAll("." + props.STATE) //change stroke
         .style("fill-opacity", "0.4")
-        .style("stroke-width", "2");
+        .style("stroke-width", "3");
 
     setLabel(props); //add dynamic label on mouseover
   };
@@ -366,8 +368,25 @@
   //function to create dynamic label
   function setLabel(props){
     //label content
-    var labelAttribute = "<h1>" + props[expressed] +
+    if (expressed == attrArray[0]) {
+        var labelAttribute = "<h1>" + props[expressed].toLocaleString() +
         "</h1><b>" + expressed + "</b>";
+    } else if (expressed == attrArray[1]) {
+         var labelAttribute = "<h1>" + props[expressed].toLocaleString() +
+        "</h1><b>" + expressed + "</b>";
+    } else if (expressed == attrArray[2]) {
+         var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
+    } else if (expressed == attrArray[3]) {
+         var labelAttribute = "<h1>" + props[expressed].toLocaleString() +
+        "</h1><b>" + expressed + "</b>";
+    } else if (expressed == attrArray[4]) {
+          var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
+    }  else if (expressed == attrArray[5]) {
+          var labelAttribute = "<h1>" + props[expressed] +
+        "</h1><b>" + expressed + "</b>";
+    };
 
     var infolabel = d3.select("body") //create info label div
         .append("div")
@@ -379,18 +398,13 @@
         .attr("class", "labelname")
         .html(props.STATE);
 
-    var formatNumber = d3.format(".0f"),
-      formatMillion = function(x) { return formatNumber(x / 1e6) + "M";},
-      formatThousand = function(x) { return formatNumber(x / 1e3) + "k";};
-
-    function formatAbbreviation(x) {
-      var v = Math.abs(x);
-      return (v >= .9995e6 ? formatMillion
-        : formatThousand)(x);
-    }
-
-    formatAbbreviation(5000000);
-    formatAbbreviation(5000);
+    function noData(value){
+      if(String(value) == "Nan"){
+        return "No data";
+      } else {
+        return value
+      };
+    };
   };
 
 
@@ -404,9 +418,9 @@
 
     //use coordinates of mousemove event to set label coordinates
     var x1 = d3.event.clientX + 10,
-        y1 = d3.event.clientY + 90,
+        y1 = d3.event.clientY + 50,
         x2 = d3.event.clientX - labelWidth - 10,
-        y2 = d3.event.clientY + 90;
+        y2 = d3.event.clientY + 50;
 
     //horizontal label coordinate, testing for overflow
     var x = d3.event.clientX > window.innerWidth - labelWidth - 20 ? x2 : x1;
